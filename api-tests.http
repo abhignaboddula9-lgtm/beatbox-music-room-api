@@ -1,0 +1,233 @@
+@baseUrl = http://localhost:3000
+@family = Strings
+@missingId = 999999999
+@loanId = 1
+
+### Instruments - Get all instruments (expected 200)
+GET {{baseUrl}}/api/instruments/
+Accept: application/json
+
+###
+
+### Instruments - Test 1: Create Guitar 3 (expected 201 on first run)
+# @name createGuitar3
+POST {{baseUrl}}/api/instruments/
+Content-Type: application/json
+
+{
+  "name": "Guitar 3",
+  "family": "Strings"
+}
+
+###
+
+### Instruments - Get Guitar 3 by ID from the create response (expected 200)
+GET {{baseUrl}}/api/instruments/{{createGuitar3.response.body.$.instrument_id}}
+Accept: application/json
+
+###
+
+### Instruments - Update Guitar 3 without changing its name (expected 200)
+PUT {{baseUrl}}/api/instruments/{{createGuitar3.response.body.$.instrument_id}}
+Content-Type: application/json
+
+{
+  "name": "Guitar 3",
+  "family": "Strings"
+}
+
+###
+
+### Instruments - Search by family (expected 200)
+GET {{baseUrl}}/api/instruments/?family={{family}}
+Accept: application/json
+
+###
+
+### Duplicate-name Test 2: Create guitar 3 (expected 409)
+POST {{baseUrl}}/api/instruments/
+Content-Type: application/json
+
+{
+  "name": "guitar 3",
+  "family": "Strings"
+}
+
+###
+
+### Instruments - Create a temporary instrument for duplicate-rename test (expected 201)
+# @name createRenameSource
+POST {{baseUrl}}/api/instruments/
+Content-Type: application/json
+
+{
+  "name": "Rename source {{$guid}}",
+  "family": "Strings"
+}
+
+###
+
+### Duplicate-name Test 3: Rename another instrument to GUITAR 3 (expected 409)
+PUT {{baseUrl}}/api/instruments/{{createRenameSource.response.body.$.instrument_id}}
+Content-Type: application/json
+
+{
+  "name": "GUITAR 3",
+  "family": "Strings"
+}
+
+###
+
+### Instruments - Rename temporary instrument to an unused name (expected 200)
+PUT {{baseUrl}}/api/instruments/{{createRenameSource.response.body.$.instrument_id}}
+Content-Type: application/json
+
+{
+  "name": "Unused rename {{$guid}}",
+  "family": "Strings"
+}
+
+###
+
+### Instruments - Invalid input: missing name (expected 400)
+POST {{baseUrl}}/api/instruments/
+Content-Type: application/json
+
+{
+  "family": "Strings"
+}
+
+###
+
+### Instruments - Invalid input: empty family (expected 400)
+POST {{baseUrl}}/api/instruments/
+Content-Type: application/json
+
+{
+  "name": "Validation sample",
+  "family": "  "
+}
+
+###
+
+### Instruments - Invalid input: PUT missing family (expected 400)
+PUT {{baseUrl}}/api/instruments/{{createGuitar3.response.body.$.instrument_id}}
+Content-Type: application/json
+
+{
+  "name": "Guitar 3"
+}
+
+###
+
+### Instruments - Invalid ID (expected 400)
+GET {{baseUrl}}/api/instruments/not-a-number
+Accept: application/json
+
+###
+
+### Instruments - Missing ID (expected 404)
+GET {{baseUrl}}/api/instruments/{{missingId}}
+Accept: application/json
+
+###
+
+### Instruments - Create temporary instrument for DELETE test (expected 201)
+# @name createDeleteTestInstrument
+POST {{baseUrl}}/api/instruments/
+Content-Type: application/json
+
+{
+  "name": "Delete test {{$guid}}",
+  "family": "Strings"
+}
+
+###
+
+### Instruments - Delete only the temporary DELETE-test instrument (expected 204)
+DELETE {{baseUrl}}/api/instruments/{{createDeleteTestInstrument.response.body.$.instrument_id}}
+
+###
+
+### Instruments - Delete only the temporary rename-test instrument (expected 204)
+DELETE {{baseUrl}}/api/instruments/{{createRenameSource.response.body.$.instrument_id}}
+
+###
+
+### Musicians - Get all musicians (expected 200)
+GET {{baseUrl}}/api/musicians/
+Accept: application/json
+
+###
+
+### Musicians - Create a test musician (expected 201; this record remains because there is no DELETE route)
+# @name createTestMusician
+POST {{baseUrl}}/api/musicians/
+Content-Type: application/json
+
+{
+  "name": "REST Client Musician {{$guid}}",
+  "department": "Test Department"
+}
+
+###
+
+### Musicians - Get musician by ID from the create response (expected 200)
+GET {{baseUrl}}/api/musicians/{{createTestMusician.response.body.$.musician_id}}
+Accept: application/json
+
+###
+
+### Musicians - Update musician using ID from the create response (expected 200)
+PUT {{baseUrl}}/api/musicians/{{createTestMusician.response.body.$.musician_id}}
+Content-Type: application/json
+
+{
+  "name": "REST Client Updated Musician {{$guid}}",
+  "department": "Updated Test Department"
+}
+
+###
+
+### Musicians - Invalid input: missing department (expected 400)
+POST {{baseUrl}}/api/musicians/
+Content-Type: application/json
+
+{
+  "name": "Incomplete Musician"
+}
+
+###
+
+### Musicians - Invalid input: PUT missing name (expected 400)
+PUT {{baseUrl}}/api/musicians/{{createTestMusician.response.body.$.musician_id}}
+Content-Type: application/json
+
+{
+  "department": "Test Department"
+}
+
+###
+
+### Musicians - Invalid ID (expected 400)
+GET {{baseUrl}}/api/musicians/not-a-number
+Accept: application/json
+
+###
+
+### Musicians - Missing ID (expected 404)
+GET {{baseUrl}}/api/musicians/{{missingId}}
+Accept: application/json
+
+###
+
+### Loans - Get all loans (expected 200; JOIN names are present only when loans exist)
+GET {{baseUrl}}/api/loans/
+Accept: application/json
+
+###
+
+### Loans - Get loan by ID (expected 404 for loanId 1 if it does not exist)
+# Change @loanId at the top to an existing loan ID to check its JOIN names.
+GET {{baseUrl}}/api/loans/{{loanId}}
+Accept: application/json

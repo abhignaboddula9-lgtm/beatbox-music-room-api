@@ -1,0 +1,127 @@
+{
+  "info": {
+    "_postman_id": "4b9d640f-7d3d-4c93-8a4c-9e49f74d4130",
+    "name": "Beatbox Music Room API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "musicianId",
+      "value": "1"
+    },
+    {
+      "key": "instrumentId",
+      "value": "1"
+    },
+    {
+      "key": "loanId",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health check",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/health"
+      }
+    },
+    {
+      "name": "Musicians",
+      "item": [
+        {
+          "name": "List musicians",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/musicians"
+          }
+        },
+        {
+          "name": "Create musician",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Avery Quinn\",\n  \"email\": \"avery@example.com\",\n  \"phone\": \"555-0100\"\n}"
+            },
+            "url": "{{baseUrl}}/api/musicians"
+          }
+        },
+        {
+          "name": "Get musician",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/musicians/{{musicianId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Instruments",
+      "item": [
+        {
+          "name": "List instruments",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/instruments"
+          }
+        },
+        {
+          "name": "Create instrument",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Studio Strat\",\n  \"category\": \"Electric guitar\",\n  \"brand\": \"Fender\",\n  \"serial_number\": \"BX-1042\"\n}"
+            },
+            "url": "{{baseUrl}}/api/instruments"
+          }
+        },
+        {
+          "name": "Get instrument",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/instruments/{{instrumentId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Loans",
+      "item": [
+        {
+          "name": "List loans",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/loans"
+          }
+        },
+        {
+          "name": "Create loan",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"musician_id\": {{musicianId}},\n  \"instrument_id\": {{instrumentId}},\n  \"due_date\": \"2026-11-29\"\n}"
+            },
+            "url": "{{baseUrl}}/api/loans"
+          }
+        },
+        {
+          "name": "Return loan",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/api/loans/{{loanId}}/return"
+          }
+        }
+      ]
+    }
+  ]
+}
