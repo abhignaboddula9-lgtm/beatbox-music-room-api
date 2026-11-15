@@ -164,3 +164,16 @@ npm test
 ```
 
 The tests use an in-memory SQLite database and cover API validation, instrument operations, case-insensitive duplicate names, and loan responses with joined musician and instrument names. They do not use or change the project's `music-room.sqlite` data.
+
+## Render deployment
+
+The API is hosted on the **Render Free plan**:
+
+- Live API: [https://beatbox-music-room-api.onrender.com](https://beatbox-music-room-api.onrender.com)
+- Health check: [https://beatbox-music-room-api.onrender.com/health](https://beatbox-music-room-api.onrender.com/health)
+
+The health endpoint returns `200 OK` when the service is responding.
+
+The deployed SQLite database uses ephemeral storage on Render Free. Its data may reset after a service restart or redeployment, so it should not be used for data that must persist. The local `music-room.sqlite` database remains unchanged by the deployment.
+
+The deployed API has the same current limitations as the local API: there is no musician `DELETE` endpoint and no loan creation endpoint.
